@@ -17,11 +17,11 @@ public class Invoice {
 		return id;
 	}
 
-	public String getUrl() {
+	public URL getUrl() {
 		return url;
 	}
 
-	public void setUrl(String url) {
+	public void setUrl(URL url) {
 		this.url = url;
 	}
 	

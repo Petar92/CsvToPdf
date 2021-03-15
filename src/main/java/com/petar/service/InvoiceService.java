@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,10 +27,15 @@ import com.petar.model.Invoice;
 @Component
 public class InvoiceService {
 	
+	@Value("${aws_access_key}")
+	private String accessKey;
+	
+	@Value("${aws_secret_keyl}")
+	private String securityKey;
 	
 	AWSCredentials credentials = new BasicAWSCredentials(
-			  "AKIA6GRIQI6QCMMNVT7J", 
-			  "mOyPliqQQUwJ/4KTuBUWYbccSuROdf/Lz/+5qjGB"
+			accessKey, 
+			securityKey
 			);
 	
 	AmazonS3 s3client = AmazonS3ClientBuilder

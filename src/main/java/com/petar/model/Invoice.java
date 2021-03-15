@@ -1,13 +1,14 @@
 package com.petar.model;
 
+import java.net.URL;
 import java.util.UUID;
 
 public class Invoice {
 	
 	private String id;
-	private String url;
+	private URL url;
 	
-	public Invoice(String url) {
+	public Invoice(URL url) {
 		this.id = UUID.randomUUID().toString();
 		this.url = url;
 	}

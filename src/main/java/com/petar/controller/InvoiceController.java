@@ -1,16 +1,13 @@
 package com.petar.controller;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,19 +32,20 @@ public class InvoiceController {
 	}
 	
 	@PostMapping("/uploads")
-	public String handleFileUpload(@RequestParam("file") MultipartFile file,
-			RedirectAttributes redirectAttributes) {
-return "index.html";
-//		invoiceService.store(file);
-//		redirectAttributes.addFlashAttribute("message",
-//				"You successfully uploaded " + file.getOriginalFilename() + "!");
-//
-//		return "redirect:/";
-	}
+	public String upload(@RequestParam("file") MultipartFile file, RedirectAttributes attributes) throws IOException {
+		
+		// check if file is empty
+        if (file.isEmpty()) {
+            attributes.addFlashAttribute("message", "Please select a file to upload.");
+            return "redirect:/";
+        }
+        
+     invoiceService.store(file);
+        
+     // return success response
+        attributes.addFlashAttribute("message", "You successfully uploaded the file!");
 
-	@ExceptionHandler(FileNotFoundException.class)
-	public ResponseEntity<?> handleStorageFileNotFound(FileNotFoundException exc) {
-		return ResponseEntity.notFound().build();
+        return "redirect:/";
 	}
 
 }

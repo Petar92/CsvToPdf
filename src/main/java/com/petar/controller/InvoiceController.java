@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.amazonaws.services.s3.model.S3Object;
 import com.petar.service.AwsService;
 
 @Controller
@@ -36,7 +37,7 @@ public class InvoiceController {
         
         awsService.storeCsv(file);
         
-        awsService.getCsv("a");
+        S3Object obj = awsService.getCsv("a");
         
         // return success response
         attributes.addFlashAttribute("message", "You successfully uploaded the file!");

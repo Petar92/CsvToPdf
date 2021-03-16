@@ -3,12 +3,12 @@ package com.petar.model;
 import java.net.URL;
 import java.util.UUID;
 
-public class Invoice {
+public class Csv {
 	
 	private String id;
 	private URL url;
 	
-	public Invoice(URL url) {
+	public Csv(URL url) {
 		this.id = UUID.randomUUID().toString();
 		this.url = url;
 	}

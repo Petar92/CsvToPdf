@@ -35,11 +35,15 @@ import com.petar.model.Csv;
 @Component
 public class AwsService {
 	
-	AmazonS3 s3client = AmazonS3ClientBuilder
-			  .standard()
-			  .withCredentials(new PropertiesFileCredentialsProvider("/home/petar/.aws/credentials"))
-			  .withRegion(Regions.EU_CENTRAL_1)
-			  .build();
+	private AmazonS3 s3client;
+		
+	public void initS3Client(String pathToCredentials) {
+		s3client = AmazonS3ClientBuilder
+				  .standard()
+				  .withCredentials(new PropertiesFileCredentialsProvider(pathToCredentials))
+				  .withRegion(Regions.EU_CENTRAL_1)
+				  .build();
+	}
 	
 	public Csv storeCsv(MultipartFile multipartFile) throws IOException {
 		String fileName = multipartFile.getOriginalFilename();

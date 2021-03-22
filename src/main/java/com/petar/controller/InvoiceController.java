@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JFileChooser;
+
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -66,16 +68,18 @@ public class InvoiceController {
 	}
 	
 	@PostMapping("/keys")
-	public String uploadKeys(@RequestParam("file") MultipartFile file, RedirectAttributes attributes) throws IOException, DocumentException {
+	public String uploadKeys(RedirectAttributes attributes) throws IOException, DocumentException {
 		
-		// check if file is empty
-        if (file.isEmpty()) {
-            attributes.addFlashAttribute("message", "Please select a keys file to upload.");
-            return "redirect:/";
-        }
-        // return success response
-        attributes.addFlashAttribute("message", "You successfully uploaded the file!");
-
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+		int result = fileChooser.showOpenDialog(null);
+		if (result == JFileChooser.APPROVE_OPTION) {
+		    File selectedFile = fileChooser.getSelectedFile();
+		    awsService.initS3Client(selectedFile.getAbsolutePath());
+		 // return success response
+	        attributes.addFlashAttribute("message", "Keys successfully uploaded");
+		}
+        
         return "redirect:/";
 	}
 	

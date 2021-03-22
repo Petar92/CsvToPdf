@@ -56,9 +56,11 @@ public class InvoiceController {
 	@GetMapping("/invoices")
 	public String getInvoices(Model model) throws IOException {
 		//Map<String, URL> invoices = awsService.getAllPdfs();
+		//****************************************************
 		Map<String, URL> invoices = new HashMap<String, URL>();
 		URL url = new URL("https://stackoverflow.com/questions/23144358/how-to-loop-through-map-in-thymeleaf");
 		invoices.put("test", url);
+		//****************************************************
 		model.addAttribute("invoices", invoices);
 	    return "index.html";
 	}

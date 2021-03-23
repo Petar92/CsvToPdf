@@ -1,5 +1,7 @@
 /*
- * iText is outdated and this part needs to be replaced using OpenPDF 
+ * ########################################################################
+ * ###iText is outdated and this part needs to be replaced using OpenPDF###
+ * ######################################################################## 
  */
 
 package com.petar.service;
@@ -13,10 +15,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.amazonaws.auth.PropertiesFileCredentialsProvider;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -28,16 +27,20 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.petar.model.S3Client;
 import com.petar.model.S3OutputStream;
 
 @Component
 public class ConverterService {
 	
-	AmazonS3 s3client = AmazonS3ClientBuilder
-			  .standard()
-			  .withCredentials(new PropertiesFileCredentialsProvider("/home/petar/.aws/credentials"))
-			  .withRegion(Regions.EU_CENTRAL_1)
-			  .build();
+	private S3Client client;
+	private AmazonS3 s3client;
+	
+	
+	public ConverterService(S3Client client) {
+		this.client = client;
+		s3client = client.getS3client();
+	}
 	
 	public void convert(MultipartFile file) throws IOException, DocumentException {
 
@@ -55,15 +58,12 @@ public class ConverterService {
 		list.remove(0);
 		list.add(0, first);
 
-
-		int count = 1;
 		String[] firstRow = list.get(0).split(",");
 		for (String record : list) {
 			if (record.equals(list.get(0))) continue;
 			String[] line = record.split(",");
 			Document document = new Document(PageSize.A4, 25, 25, 25, 25);
 			final OutputStream out = new S3OutputStream(s3client, "csv-to-pdf-invoices", "Document/pdfs/" + line[5]  + ".pdf");
-			count++;
 			PdfWriter pdfWriter = PdfWriter.getInstance(document, out);
 			document.setPageSize(PageSize.LETTER.rotate());
 
@@ -136,6 +136,5 @@ public class ConverterService {
 			pdfWriter.close();
 
 		}
-
 	}
 }

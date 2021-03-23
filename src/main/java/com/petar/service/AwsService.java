@@ -8,41 +8,33 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.SdkClientException;
-import com.amazonaws.auth.PropertiesFileCredentialsProvider;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.iterable.S3Objects;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
-import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.petar.model.Csv;
+import com.petar.model.S3Client;
 
 @Component
 public class AwsService {
 	
+	private S3Client client;
 	private AmazonS3 s3client;
-		
-	public void initS3Client(String pathToCredentials) {
-		s3client = AmazonS3ClientBuilder
-				  .standard()
-				  .withCredentials(new PropertiesFileCredentialsProvider(pathToCredentials))
-				  .withRegion(Regions.EU_CENTRAL_1)
-				  .build();
+	
+	
+	public AwsService(S3Client client) {
+		this.client = client;
+		s3client = client.getS3client();
 	}
 	
 	public Csv storeCsv(MultipartFile multipartFile) throws IOException {

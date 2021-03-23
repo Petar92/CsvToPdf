@@ -4,10 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.JFileChooser;
@@ -22,8 +19,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.S3Object;
 import com.itextpdf.text.DocumentException;
+import com.petar.model.S3Client;
 import com.petar.service.AwsService;
 import com.petar.service.ConverterService;
 
@@ -32,10 +31,12 @@ public class InvoiceController {
 	
 	private final AwsService awsService;
 	private final ConverterService converterService;
+	private final S3Client s3client;
 	
-	public InvoiceController(AwsService awsService, ConverterService converterService) {
+	public InvoiceController(AwsService awsService, ConverterService converterService, S3Client s3client) {
 		this.awsService = awsService;
 		this.converterService = converterService;
+		this.s3client = s3client;
 	}
 	
 	@GetMapping("/")
@@ -75,7 +76,7 @@ public class InvoiceController {
 		int result = fileChooser.showOpenDialog(null);
 		if (result == JFileChooser.APPROVE_OPTION) {
 		    File selectedFile = fileChooser.getSelectedFile();
-		    awsService.initS3Client(selectedFile.getAbsolutePath());
+		    s3client.initS3Client(selectedFile.getAbsolutePath());
 		 // return success response
 	        attributes.addFlashAttribute("message", "Keys successfully uploaded");
 		}
@@ -85,12 +86,6 @@ public class InvoiceController {
 	
 	@PostMapping("/uploads")
 	public String uploadCsv(@RequestParam("file") MultipartFile file, RedirectAttributes attributes) throws IOException, DocumentException {
-		
-		// check if file is empty
-        if (file.isEmpty()) {
-            attributes.addFlashAttribute("message", "Please select a file to upload.");
-            return "redirect:/";
-        }
         
         awsService.storeCsv(file);
 		converterService.convert(file);

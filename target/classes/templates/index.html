@@ -1,10 +1,22 @@
+<!-- 
+######################################################################################
+######################################################################################
+#####	                                                                         #####
+#####   This code is really bad and needs serious refactoring:                   #####
+#####   1. Solve net error 404 when importing css from /static/csss/main.css     #####
+#####   2. Do the same for javascript                                            #####
+#####   3. Do the cleanup                                                        #####
+#####                                                                            ##### 
+######################################################################################
+######################################################################################
+-->
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
     <title>Invoice Generator</title>
 	 <!-- Latest compiled and minified CSS -->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	 <style>
 		  form {
 				    display: table-caption;
@@ -19,7 +31,7 @@
 				    display: none;
 				}
 		  		
-		  .upload {
+		  .uploadKeys, .selectFile, .uploadFile {
 		    		background-color: #4CAF50; /* Green */
 				    border: none;
 				    color: white;
@@ -34,7 +46,7 @@
 		  			width: 20rem;
 				}
 				
-		  	  .upload:hover {
+		  	  .uploadKeys:hover, .selectFile:hover, .uploadFile:hover {
 				    background-color: #4fc253; /* Green */
 	  				color: white;
 				}
@@ -58,6 +70,9 @@
 		  		}
 	  		
 	 </style>
+	 
+
+	 
 </head>
 <body>
 
@@ -74,13 +89,16 @@
 					</label>
 					<input name="file" id="keys-upload" type="file"/>
 			-->		
-				  	<label for="keysFile-upload" class="upload">
-					    <i class="fa fa-cloud-upload"></i> Upload Keys
+				  	<label for="keysFile-upload" class="uploadKeys">
+					    <i></i> Upload Keys
 					</label>
 					<input type="submit" id="keysFile-upload" />
 				</div>
-				<div th:if="${!(invalidArgumentError == null)}">
+				<div th:if="${!(invalidArgumentError == null)}" class="errorHandler">
 				      <h5> You have input invalid keys file! </h5>
+				</div>
+				<div th:if="${!(nullPointerError == null)}" class="errorHandler">
+				      <h5> You have to enter aws keys! </h5>
 				</div>
 		</form>
 	</div>
@@ -89,16 +107,19 @@
 		<form method="POST" enctype="multipart/form-data" action="/uploads">
 				<p>File to upload:</p>
 				<div class="buttons">
-					<label for="files" class="upload">
-					    <i class="fa fa-cloud-upload"></i> Select File
+					<label for="files" class="selectFile">
+					    <i></i> Select File
 					</label>
 					<input type="file" name="file" id="files"/>
+					<div th:if="${!(fileSystemError == null)}" class="errorHandler">
+				      <h5> Select file first! </h5>
+					</div>
 					
-					<label for="file-upload" class="upload">
-					    <i class="fa fa-cloud-upload"></i> Upload File
+					<label for="file-upload" class="uploadFile">
+					    <i></i> Upload File
 					</label>
 					<input type="submit" value="Upload File" id="file-upload"/>
-					<div th:if="${!(maxUploadSizeError == null)}">
+					<div th:if="${!(maxUploadSizeError == null)}" class="errorHandler">
 				      <h5> Max file upload size exceeded! </h5>
 				    </div>
 				</div>
@@ -124,3 +145,18 @@
 
 </body>
 </html>
+
+	 <script>	 
+		 const keysUpload = document.querySelector('.uploadKeys');
+		 const selectFile = document.querySelector('.selectFile');
+		 const uploadFile = document.querySelector('.uploadFile');
+		 const error = document.querySelector('.errorHandler')
+		 keysUpload.addEventListener('click', hideClass);	
+		 function hideClass() {
+			 error.textContent='';
+		 }
+		 selectFile.addEventListener('click', hideClass);	
+		 function hideClass() {
+			 error.textContent='';
+		 }
+	</script>

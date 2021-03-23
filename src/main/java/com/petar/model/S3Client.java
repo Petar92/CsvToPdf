@@ -10,14 +10,20 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 @Component
 public class S3Client {
 	
+	private AmazonS3 s3client;
+	
 	public S3Client() {}
 	
-	public AmazonS3 getClient() {
-		return AmazonS3ClientBuilder
+	public void initS3Client(String pathToCredentials) {
+		s3client = AmazonS3ClientBuilder
 				  .standard()
-				  .withCredentials(new PropertiesFileCredentialsProvider("/home/petar/.aws/credentials"))
+				  .withCredentials(new PropertiesFileCredentialsProvider(pathToCredentials))
 				  .withRegion(Regions.EU_CENTRAL_1)
 				  .build();
+	}
+	
+	public AmazonS3 getS3client() {
+		return s3client;
 	}
 
 }

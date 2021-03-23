@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.SdkClientException;
-import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.iterable.S3Objects;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.S3Object;
@@ -29,39 +28,37 @@ import com.petar.model.S3Client;
 public class AwsService {
 	
 	private S3Client client;
-	private AmazonS3 s3client;
 	
 	
 	public AwsService(S3Client client) {
 		this.client = client;
-		s3client = client.getS3client();
 	}
 	
 	public Csv storeCsv(MultipartFile multipartFile) throws IOException {
 		String fileName = multipartFile.getOriginalFilename();
 		File s3File = convertToFile(multipartFile);
-		s3client.putObject(
+		client.getS3client().putObject(
 				  "csv-to-pdf-invoices", 
 				  "Document/csvs/" + fileName,
 				  s3File
 				);
-		URL url = s3client.getUrl("csv-to-pdf-invoices", "Document/csvs/" + fileName);
+		URL url = client.getS3client().getUrl("csv-to-pdf-invoices", "Document/csvs/" + fileName);
 		return new Csv(url);
 	}
 	
 	public S3Object getCsv(String fileName) throws IOException {
-		S3Object s3object = s3client.getObject("csv-to-pdf-invoices", "Document/csvs/" + fileName);
+		S3Object s3object = client.getS3client().getObject("csv-to-pdf-invoices", "Document/csvs/" + fileName);
 		return s3object; 
 	}
 	
 	public S3Object getPdf(String fileName) throws IOException {
-		S3Object s3object = s3client.getObject("csv-to-pdf-invoices", "Document/pdfs/" + fileName);
+		S3Object s3object = client.getS3client().getObject("csv-to-pdf-invoices", "Document/pdfs/" + fileName);
 		return s3object; 
 	}
 	
 	public Map<String, URL> getAllPdfs() throws IOException {
 		Map<String, URL> map = new HashMap<String, URL>();
-		for ( S3ObjectSummary summary : S3Objects.withPrefix(s3client, "csv-to-pdf-invoices", "Document/pdfs/") ) {
+		for ( S3ObjectSummary summary : S3Objects.withPrefix(client.getS3client(), "csv-to-pdf-invoices", "Document/pdfs/") ) {
 			
 	        try {
 
@@ -77,7 +74,7 @@ public class AwsService {
 	                    new GeneratePresignedUrlRequest("csv-to-pdf-invoices", summary.getKey())
 	                            .withMethod(HttpMethod.GET)
 	                            .withExpiration(expiration);
-	            URL url = s3client.generatePresignedUrl(generatePresignedUrlRequest);
+	            URL url = client.getS3client().generatePresignedUrl(generatePresignedUrlRequest);
 
 	            System.out.println("Pre-Signed URL: " + url.toString());
 	            

@@ -15,7 +15,6 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -34,12 +33,10 @@ import com.petar.model.S3OutputStream;
 public class ConverterService {
 	
 	private S3Client client;
-	private AmazonS3 s3client;
 	
 	
 	public ConverterService(S3Client client) {
 		this.client = client;
-		s3client = client.getS3client();
 	}
 	
 	public void convert(MultipartFile file) throws IOException, DocumentException {
@@ -63,7 +60,7 @@ public class ConverterService {
 			if (record.equals(list.get(0))) continue;
 			String[] line = record.split(",");
 			Document document = new Document(PageSize.A4, 25, 25, 25, 25);
-			final OutputStream out = new S3OutputStream(s3client, "csv-to-pdf-invoices", "Document/pdfs/" + line[5]  + ".pdf");
+			final OutputStream out = new S3OutputStream(client.getS3client(), "csv-to-pdf-invoices", "Document/pdfs/" + line[5]  + ".pdf");
 			PdfWriter pdfWriter = PdfWriter.getInstance(document, out);
 			document.setPageSize(PageSize.LETTER.rotate());
 

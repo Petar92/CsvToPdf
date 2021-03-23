@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.util.NestedServletException;
+
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 
 
 @ControllerAdvice
@@ -38,6 +41,13 @@ public class GlobalControllerExceptionHandler {
     @ExceptionHandler(NullPointerException.class)
     public String handleConstraintViolation(NullPointerException exception, Model model) { // 
     	model.addAttribute("nullPointerError", "");
+    	return "index.html";
+    }
+    
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(AmazonS3Exception.class)
+    public String handleConstraintViolation(AmazonS3Exception exception, Model model) { // 
+    	model.addAttribute("amazonS3Exception", "");
     	return "index.html";
     }
 }

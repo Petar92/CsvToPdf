@@ -100,6 +100,9 @@
 				<div th:if="${!(nullPointerError == null)}" class="errorHandler">
 				      <h5> You have to enter aws keys! </h5>
 				</div>
+				<div th:if="${!(amazonS3Exception == null)}" class="errorHandler">
+				      <h5> The AWS Access Key Id you provided does not exist in the records! </h5>
+				</div>
 		</form>
 	</div>
 

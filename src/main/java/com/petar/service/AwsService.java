@@ -21,7 +21,6 @@ import com.amazonaws.services.s3.iterable.S3Objects;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
-import com.petar.model.Csv;
 import com.petar.model.S3Client;
 
 @Component
@@ -34,7 +33,7 @@ public class AwsService {
 		this.client = client;
 	}
 	
-	public Csv storeCsv(MultipartFile multipartFile) throws IOException {
+	public void storeCsv(MultipartFile multipartFile) throws IOException {
 		String fileName = multipartFile.getOriginalFilename();
 		File s3File = convertToFile(multipartFile);
 		client.getS3client().putObject(
@@ -42,8 +41,6 @@ public class AwsService {
 				  "Document/csvs/" + fileName,
 				  s3File
 				);
-		URL url = client.getS3client().getUrl("csv-to-pdf-invoices", "Document/csvs/" + fileName);
-		return new Csv(url);
 	}
 	
 	public S3Object getCsv(String fileName) throws IOException {

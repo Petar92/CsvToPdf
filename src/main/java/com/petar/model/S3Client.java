@@ -15,8 +15,7 @@ public class S3Client {
 	public S3Client() {}
 	
 	public void initS3Client(String pathToCredentials) {
-		System.out.println("PATH " + pathToCredentials);
-		this.s3client= AmazonS3ClientBuilder
+		this.s3client = AmazonS3ClientBuilder
 				  .standard()
 				  .withCredentials(new PropertiesFileCredentialsProvider(pathToCredentials))
 				  .withRegion(Regions.EU_CENTRAL_1)
@@ -24,7 +23,6 @@ public class S3Client {
 	}
 	
 	public AmazonS3 getS3client() {
-		System.out.println("getting client");
 		return s3client;
 	}
 
